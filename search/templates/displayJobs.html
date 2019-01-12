@@ -1,0 +1,205 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>
+            Display jobs
+        </title>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <style>
+    .card:hover{
+        background:rgb(190, 40, 40);
+    }
+.glyphicon {
+    font-size: 50px;
+    margin-top: 10px;
+}
+.glyphicon.glyphicon-search {
+    font-size: 18px;
+}
+.glyphicon.glyphicon-home,.glyphicon.glyphicon-user,.glyphicon.glyphicon-folder-close {
+    font-size: 30px;
+}
+p {
+    height:60px;
+    line-height:20px; /* Height / no. of lines to display */
+overflow: hidden;
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+}
+a{color: black; 
+      text-decoration: none;
+}
+a:hover 
+{
+     color: black; 
+     text-decoration:none; 
+     cursor:pointer;  
+}
+ a:hover{
+        font-family: 'CantarellBold', Arial, sans-serif;
+    }
+/* .abc:hover{
+  background-color: #380505;
+    font-weight:bold;
+    font-family: 'CantarellBold', Arial, sans-serif;
+    text-transform: capitalize;
+    width:40rem;
+} */
+    </style>
+    </head>
+    <body style="background-color:lightgray">
+<!-- <nav class="navbar navbar-inverse">
+                    <div class="container-fluid">
+                      <div class="navbar-header">   
+                        <a class="navbar-brand" href="#"><h1><b>LinkedIn</b></h1></a>
+                      </div>
+                      <ul class="nav navbar-nav" style="font-size:16px">
+                        <li class="active"><a href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-home"></i>Home</a></li>
+                        <li><a href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-user"></i>My Network</a></li>
+                        <li><a href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-folder-close"></i>Jobs</a></li>
+                      </ul>
+                      <form class="navbar-form navbar-left" action="" method="post">
+			{% csrf_token %}
+                        <div class="input-group">
+                          <input style="width:180px;" type="text" class="form-control" placeholder="Search" name="search" required>
+                          <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                              <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                </nav> -->
+                <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color:#1d0303">
+                    <a class="navbar-brand" href="#" style=" font-size:40px;"><b style="color:rgb(0, 123, 139);">LinkedIn</b></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                      <ul class="navbar-nav">
+                          <li style="margin-left:15px; font-size:18px;" class="nav-item active"><a style="color:gray" class="nav-link" href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-home"></i>Home</a></li>
+                          <li style="margin-left:15px; font-size:18px;" class="nav-item"><a style="color:gray" class="nav-link" href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-user"></i>My Network</a></li>
+                          <li style="margin-left:15px; font-size:18px;" class="nav-item"><a style="color:gray" class="nav-link" href="#"><i style="margin-right:8px;" class="glyphicon glyphicon-folder-close"></i>Jobs</a></li>
+                          <li style="margin-left:45px; margin-top:15px;" class="nav-item">
+                            <form class="navbar-form navbar-left" action="{% url 'index' 'search' %}" method="post">
+                                {% csrf_token %}
+                                                  <div class="input-group">
+                                                    <input style="width:220px;height:38px" type="text" class="form-control" placeholder="Search" name="search" required>
+                                                    <div class="input-group-btn">
+                                                      <button class="btn btn-default" type="submit">
+                                                        <i class="glyphicon glyphicon-search"></i>
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                              </form>
+                            </li>
+                        </ul>
+                      </ul>
+                    </div>
+                  </nav>
+        <div class="container" style="background-color:darkcyan;font-size: 16px; margin-top:120px;margin-bottom:40px">
+<h1 style="font-style:italic;font-weight:bold"> Search results for Jobs </h1>
+ {% if results %}
+ <div class="row">
+{% for field in results %}
+     <a href="{% url 'jobDetail' field.id %}" >  
+
+        <div class="col-sm-4 abc" style="width:33%; float: left; margin-top:30px">
+          <div class="card bg-light mb-4 hoverable" style="width: 30rem;">
+            <img class="card-img-top" src="{% static "job.png" %}" alt="Card image cap" style="height:150px">
+            <div class="card-body">
+              <h5 class="card-title" style="font-size: 18px;">{{ field.designation}} </h5>
+              <p class="card-text">{{ field.Description}}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{ field.Company}}</li>
+              <li class="list-group-item">{{ field.location}} </li>
+            </ul>
+            <div class="card-body">
+              <a href="#" class="card-link">SAVE</a>
+              <a href="#" class="card-link">APPLY</a>
+            </div>
+          </div>
+        </div>
+ </a>       
+   
+
+{% endfor %}
+ </div>
+{% else %}
+ <h2 style="text-align:center"> No results found! </h2>
+{% endif %}
+</div>
+
+<!-- search results for profiles -->
+
+  <div class="container" style="background-color:darkcyan;font-size: 16px; margin-top:30px;margin-bottom:100px">
+<h1 style="font-style:italic;font-weight:bold;margin-top:5px"> Search results for people </h1>
+{% if profiles %}
+
+ <div class="row">
+{% for field in profiles %}
+     <a href="{% url 'jobDetail' field.id %}" >  
+
+        <div class="col-sm-4 abc" style="width:33%; float: left; margin-top:30px">
+          <div class="card bg-light mb-4 hoverable" style="width: 30rem;">
+            <img class="card-img-top" src="{% static "edu.jpg" %}" alt="Card image cap" style="height:150px">
+            <div class="card-body">
+              <h5 class="card-title" style="font-size: 18px;">{{ field.current_position}} </h5>
+              <p class="card-text">{{ field.summary}}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{ field.full_name}}</li>
+              <li class="list-group-item">{{ field.location}} </li>
+            </ul>
+            <div class="card-body">
+              <a href="#" class="card-link">SAVE</a>
+              <a href="#" class="card-link">APPLY</a>
+            </div>
+          </div>
+        </div>
+ </a>       
+   
+
+{% endfor %}
+ </div>
+{% else %}
+ <h2 style="text-align:center"> No results found! </h2>
+{% endif %}
+</div>
+
+<!-- search results end here -->
+<!-- Footer -->
+<div class="fixed-bottom">
+
+<footer class="page-footer font-small special-color-dark pt-4" style="background-color:black; margin-top:20px">
+
+    <!-- Footer Links -->
+    <div class="container-fluid text-center text-md-left">
+
+
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3" style="font-size:16px;color:white ">&copy; 2019 Copyright:
+      <a href="https://mdbootstrap.com/education/bootstrap/" style="color:blue"> LinkedinHack.com</a>
+    </div>
+    <!-- Copyright -->
+
+  </footer>
+</div>
+  <!-- Footer -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
+</html>
