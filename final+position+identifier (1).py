@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[38]:
+# In[46]:
 
 
 import nltk
@@ -12,35 +12,28 @@ from nltk.stem import PorterStemmer
 from LinkedIn_Operation_identification import findSynonyms
 
 
-# In[95]:
+# In[56]:
 
 
-synJob = findSynonyms('jobs')
-JobSyn = ['job']
-for syn in synJob:
-    if syn not in JobSyn:
-        JobSyn.append(syn)
+todo = ['position', 'openings', 'profiles', 'jobs']
+synonymz = []
 
-print(JobSyn)
-
-synOpen = findSynonyms('openings')
-OpenSyn = ['opening']
-for syn in synOpen:
-    if syn not in OpenSyn:
-        OpenSyn.append(syn)
-
-print(OpenSyn)
-
-synPos = findSynonyms('position')
-PosSyn = ['position']
-for syn in synPos:
-    if syn not in PosSyn:
-        PosSyn.append(syn)
-
-print(PosSyn)
+for cur in todo:
+    synCur = findSynonyms(cur)
+    curSyn = [cur]
+    for syn in synCur:
+        if syn not in curSyn:
+            curSyn.append(syn)
+    synonymz.append(curSyn)
 
 
-# In[12]:
+# In[54]:
+
+
+# synonymz
+
+
+# In[57]:
 
 
 import os
@@ -50,7 +43,7 @@ from pycorenlp import StanfordCoreNLP
 nlp = StanfordCoreNLP('http://localhost:9000/')
 
 
-# In[108]:
+# In[58]:
 
 
 def stemming(text):
@@ -66,10 +59,10 @@ def stemming(text):
     return tempword
 
 
-# In[97]:
+# In[59]:
 
 
-text = ('search for senior software developer job openings at LinkedIn')
+text = ('sales jobs at LinkedIn')
 # text = stemming(text)
 
 output = nlp.annotate( text, properties = { 
@@ -77,14 +70,14 @@ output = nlp.annotate( text, properties = {
     'outputFormat': 'json'})
 
 
-# In[98]:
+# In[60]:
 
 
 depTreeStr = output['sentences'][0]['parse']
 print(depTreeStr)
 
 
-# In[99]:
+# In[61]:
 
 
 from nltk.tree import ParentedTree
@@ -92,61 +85,46 @@ ptree = ParentedTree.fromstring(depTreeStr)
 ptree
 
 
-# In[100]:
+# In[62]:
 
 
 leaf_values = ptree.leaves()
 
 tree_location = []
 flag = 0
-for word in OpenSyn:
-    if word in leaf_values:
-        leaf_index = leaf_values.index(word)
-        tree_location = ptree.leaf_treeposition(leaf_index)
-        print (tree_location)
-        print (ptree[tree_location])
-        flag = 1
+
+for cur in synonymz:
+    for word in cur:
+        if word in leaf_values:
+            leaf_index = leaf_values.index(word)
+            tree_location = ptree.leaf_treeposition(leaf_index)
+            print (tree_location)
+            print (ptree[tree_location])
+            flag = 1
+            break
+    if(flag == 1):
         break
-if(flag == 0):
-    for word in PosSyn:
-        if word in leaf_values:
-            leaf_index = leaf_values.index(word)
-            tree_location = ptree.leaf_treeposition(leaf_index)
-            print (tree_location)
-            print (ptree[tree_location])
-            flag = 2
-            break
-if(flag == 0):
-    for word in JobSyn:
-        if word in leaf_values:
-            leaf_index = leaf_values.index(word)
-            tree_location = ptree.leaf_treeposition(leaf_index)
-            print (tree_location)
-            print (ptree[tree_location])
-            flag = 3
-            break
 
 
-# In[106]:
+# In[63]:
 
 
 treeLoc = tree_location[:-2]
 print(treeLoc)
 
+subtree = ptree[treeLoc]
+position = ""
 if(treeLoc != []):
-    subtree = ptree[treeLoc]
-
     childNodes = subtree.leaves()
     print(childNodes)
 
     position = (" ".join(childNodes))
     print(position)
-    
 
 subtree
 
 
-# In[1]:
+# In[64]:
 
 
 position
